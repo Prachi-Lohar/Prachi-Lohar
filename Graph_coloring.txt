@@ -1,0 +1,50 @@
+# Adjacency matrix
+G = [
+    [0, 1, 1, 0, 1, 0],
+    [1, 0, 1, 1, 0, 1],
+    [1, 1, 0, 1, 1, 0],
+    [0, 1, 1, 0, 0, 1],
+    [1, 0, 1, 0, 0, 1],
+    [0, 1, 0, 1, 1, 0]
+]
+
+# Node labels
+nodes = "abcdef"
+
+# Mapping node labels to indices
+t_ = {nodes[i]: i for i in range(len(G))}
+
+# Calculate degree of each node
+degree = [sum(G[i]) for i in range(len(G))]
+
+# Initialize available colors for each node
+colorDict = {nodes[i]: ["Blue", "Red", "Yellow", "Green"] for i in range(len(G))}
+
+# Sort nodes based on decreasing degree
+sortedNode = []
+used_indices = []
+for _ in range(len(degree)):
+    max_deg = -1
+    idx = -1
+    for j in range(len(degree)):
+        if j not in used_indices and degree[j] > max_deg:
+            max_deg = degree[j]
+            idx = j
+    used_indices.append(idx)
+    sortedNode.append(nodes[idx])
+
+# Assign colors greedily
+theSolution = {}
+for n in sortedNode:
+    availableColors = colorDict[n]
+    chosenColor = availableColors[0]
+    theSolution[n] = chosenColor
+    # Remove chosen color from adjacent nodes
+    for j in range(len(G)):
+        if G[t_[n]][j] == 1:
+            if chosenColor in colorDict[nodes[j]]:
+                colorDict[nodes[j]].remove(chosenColor)
+
+# Output the coloring result
+for t, w in sorted(theSolution.items()):
+    print("Node", t, "=", w)

@@ -1,0 +1,40 @@
+import random
+
+
+responses = {
+    
+    "hi": ["Hey there!", "Hi! What's up?", "Hello! 😊"],
+    "how are you": ["Doing great, thanks for asking! How about you?", "I'm just code, but feeling pretty awesome today."],
+    "tell me a joke": ["Why don't programmers like nature? It has too many bugs! 😂", 
+                       "Why do Java developers wear glasses? Because they can't C#! 🤓"],
+    "what are you doing": ["Just chilling in my code world, ready to chat with you!", "Waiting for your next question 😄"],
+    "what is your name": ["You can call me CodeBot!", "I’m your friendly chatbot assistant 🚀"],
+    "thank you": ["You're very welcome!", "No problem, happy to help! 👍"],
+    "bye": ["Goodbye! Have a great day!", "See you later! 👋"],
+    "what is python": ["Python is a beginner-friendly programming language great for everything from web to AI."],
+    "what is machine learning": ["It's a way computers learn from data without being directly programmed."],
+    "what is html": ["HTML stands for HyperText Markup Language. It's used to build web pages."],
+    "what is database": ["A database is a structured collection of data that can be easily accessed, managed, and updated."],
+    "what is git": ["Git is a version control system that tracks changes in your code projects."],
+    "what is api": ["An API (Application Programming Interface) allows different software apps to talk to each other."],
+    
+    
+    "default": [
+        "Hmm... I don't quite understand. Can you try asking differently?",
+        "Interesting... but I might need more context for that!",
+        "I’m not sure I know that yet. Try a different question?"
+    ]
+}
+
+# Function to get bot's response
+def get_bot_response(user_message):
+    user_message = user_message.lower()
+    return random.choice(responses.get(user_message, responses["default"]))
+
+print("👋 Welcome! I'm CodeBot. Type 'quit' to exit.\n")
+while True:
+    user_message = input("You: ")
+    if user_message.lower() == "quit":
+        print("Bot: Catch you later! 👋")
+        break
+    print("Bot:", get_bot_response(user_message))

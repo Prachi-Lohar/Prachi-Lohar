@@ -1,0 +1,104 @@
+class Node:
+    def __init__(self, data, level, fval):
+        """Initialize the node with data, level, and f-value."""
+        self.data = data
+        self.level = level
+        self.fval = fval
+
+    def generate_children(self):
+        """Generate all possible children by moving the blank space."""
+        x, y = self.find_blank(self.data)
+        directions = [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
+        children = []
+
+        for dx, dy in directions:
+            child_data = self.move_blank(self.data, x, y, dx, dy)
+            if child_data:
+                child_node = Node(child_data, self.level + 1, 0)
+                children.append(child_node)
+        return children
+
+    def move_blank(self, puzzle, x1, y1, x2, y2):
+        """Move the blank space if within bounds."""
+        if 0 <= x2 < len(puzzle) and 0 <= y2 < len(puzzle[0]):
+            new_puzzle = [row[:] for row in puzzle]  # Deep copy
+            new_puzzle[x1][y1], new_puzzle[x2][y2] = new_puzzle[x2][y2], new_puzzle[x1][y1]
+            return new_puzzle
+        return None
+
+    def find_blank(self, puzzle):
+        """Find the position of the blank ('_') in the puzzle."""
+        for i in range(len(puzzle)):
+            for j in range(len(puzzle[i])):
+                if puzzle[i][j] == '_':
+                    return i, j
+
+
+class Puzzle:
+    def __init__(self, size):
+        """Initialize puzzle size and lists for open and closed nodes."""
+        self.n = size
+        self.open = []
+        self.closed = []
+
+    def accept_input(self):
+        """Accept puzzle input from user."""
+        puzzle = []
+        print(f"Enter the puzzle ({self.n}x{self.n}), use '_' for blank:")
+        for _ in range(self.n):
+            row = input().strip().split()
+            puzzle.append(row)
+        return puzzle
+
+    def f(self, node, goal):
+        """Compute f(x) = g(x) + h(x)."""
+        return self.h(node.data, goal) + node.level
+
+    def h(self, start, goal):
+        """Compute number of misplaced tiles."""
+        mismatch = 0
+        for i in range(self.n):
+            for j in range(self.n):
+                if start[i][j] != goal[i][j] and start[i][j] != '_':
+                    mismatch += 1
+        return mismatch
+
+    def print_puzzle(self, puzzle):
+        """Print the puzzle matrix."""
+        for row in puzzle:
+            print(" ".join(row))
+        print()
+
+    def process(self):
+        """Run the A* algorithm."""
+        start = self.accept_input()
+        goal = self.accept_input()
+
+        start_node = Node(start, 0, 0)
+        start_node.fval = self.f(start_node, goal)
+
+        self.open.append(start_node)
+
+        while self.open:
+            current = self.open.pop(0)
+            print("Current State:")
+            self.print_puzzle(current.data)
+
+            if self.h(current.data, goal) == 0:
+                print("Goal reached!")
+                break
+
+            children = current.generate_children()
+            for child in children:
+                child.fval = self.f(child, goal)
+                self.open.append(child)
+
+            self.closed.append(current)
+            self.open.sort(key=lambda x: x.fval)  # Sort by f-value
+
+
+# Run the puzzle
+if __name__ == "__main__":
+    puzzle_size = 3  # 3x3 puzzle
+    puzzle = Puzzle(puzzle_size)
+    puzzle.process()
